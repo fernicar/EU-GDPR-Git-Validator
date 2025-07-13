@@ -41,9 +41,31 @@ Every Git repository potentially contains:
 
 ## 🔧 Installation
 
-### From PyPI (Recommended)
+### Basic Installation (Core Features)
 ```bash
 pip install gdpr-git-validator
+```
+
+### Full Installation (All Features)
+```bash
+pip install gdpr-git-validator[full]
+```
+
+### PDF Report Generation
+```bash
+pip install gdpr-git-validator[pdf]
+```
+
+### Data Analysis Features
+```bash
+pip install gdpr-git-validator[analysis]
+```
+
+### Development Installation
+```bash
+git clone https://github.com/yourusername/EU-GDPR-Git-Validator.git
+cd EU-GDPR-Git-Validator
+pip install -e .[dev]
 ```
 
 ### From Source
@@ -53,7 +75,7 @@ cd EU-GDPR-Git-Validator
 pip install -e .
 ```
 
-## 📖 Usage
+## � Usage
 
 ### Basic Repository Scan
 ```bash
@@ -75,7 +97,7 @@ gdpr-validator scan /path/to/repository --articles 17,20 --verbose
 gdpr-validator analyze-forks https://github.com/user/repo
 ```
 
-## 📊 Sample Output
+## �📊 Sample Output
 
 ```
 🔍 GDPR Compliance Scan Results
