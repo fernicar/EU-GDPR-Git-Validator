@@ -1,28 +1,41 @@
-# 🔒 EU GDPR Git Validator
+# 🔒 EU GDPR Git Validator (TINS Edition)
 
 **Are your Git repositories GDPR compliant?**
 
-This tool analyses your Git history for potential European data protection violations. Essential for any EU-based development team or organisation handling European user data.
+This tool analyzes your Git history for potential European data protection violations. This TINS Edition refactors the original command-line tool into a modern GUI application using PySide6, following the principles of TINS (There Is No Source).
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GDPR Compliant](https://img.shields.io/badge/GDPR-Compliant%20Tool-green.svg)](https://gdpr.eu/)
 
-## 🚀 Quick Start
+## 🚀 GUI Architecture
 
-```bash
- pip install -e .
-gdpr-validator scan /path/to/your/repo
-```
+This version of the EU GDPR Git Validator features a new GUI built with PySide6. The architecture is designed to be modular and extensible, with a clear separation between the business logic and the user interface.
+
+### Key Architectural Features:
+
+*   **PySide6-based GUI**: The entire user interface is built using PySide6, the official Python bindings for the Qt framework.
+*   **Model-View-Controller (MVC) Pattern**: The application follows the MVC pattern to separate the data model, the user interface, and the control logic.
+*   **`model.py`**: This file encapsulates the core business logic of the application, including the Git scanner, GDPR analyzer, and compliance checker.
+*   **`main.py`**: This file contains the view and controller logic for the PySide6-based GUI.
+*   **Signals and Slots**: The GUI communicates with the business logic using Qt's signals and slots mechanism, ensuring a decoupled and event-driven architecture.
+*   **Jinja2 Templates for Reports**: The application uses Jinja2 templates to generate interactive and user-friendly HTML reports.
+
+### GUI Components:
+
+*   **Main Window**: A central window that provides access to all the application's features.
+*   **Repository Selection**: A user-friendly interface for selecting the Git repository to be analyzed.
+*   **Scan Configuration**: Options for customizing the scan, such as selecting specific GDPR articles to check.
+*   **Interactive Report View**: A web view widget for displaying the HTML compliance report.
 
 ## 📋 What This Tool Does
 
-- **🔍 Git History Scanner**: Analyses commit logs for personal identifiable information
+- **🔍 Git History Scanner**: Analyzes commit logs for personal identifiable information
 - **🌐 Fork Tracking**: Documents how personal data propagates across repository forks
-- **🔐 Hash Analysis**: Examines git hashes for permanent data retention issues
+- **🔐 Hash Analysis**: Examains git hashes for permanent data retention issues
 - **📊 Branch Inspection**: Checks branch metadata for personal data exposure
 - **✅ GDPR Compliance Checker**: Validates against specific GDPR articles
-- **📄 Report Generator**: Creates detailed compliance documentation
+- **📄 Report Generator**: Creates detailed compliance documentation in various formats (HTML, PDF, JSON, Markdown)
 
 ## 🎯 Why You Need This
 
@@ -41,129 +54,31 @@ Every Git repository potentially contains:
 
 ## 🔧 Installation
 
-### Basic Installation (Core Features)
 ```bash
 git clone https://github.com/DragonDiffusionbyBoyo/EU-GDPR-Git-Validator.git
 cd EU-GDPR-Git-Validator
-pip install -e .
+pip install -r requirements.txt
+python TINS_Edition/main.py
 ```
 
-### Full Installation (All Features)
-```bash
-pip install gdpr-git-validator[full]
-```
+## Usage
 
-### PDF Report Generation
-```bash
-pip install gdpr-git-validator[pdf]
-```
-
-### Data Analysis Features
-```bash
-pip install gdpr-git-validator[analysis]
-```
-
-### Development Installation
-```bash
-git clone https://github.com/yourusername/EU-GDPR-Git-Validator.git
-cd EU-GDPR-Git-Validator
-pip install -e .[dev]
-```
-
-### From Source
-```bash
-git clone https://github.com/yourusername/EU-GDPR-Git-Validator.git
-cd EU-GDPR-Git-Validator
-pip install -e .
-```
-
-## � Usage
-
-### Basic Repository Scan
-```bash
-gdpr-validator scan /path/to/repository
-```
-
-### Generate Detailed Report
-```bash
-gdpr-validator scan /path/to/repository --report-format html --output compliance-report.html
-```
-
-### Check Specific GDPR Articles
-```bash
-gdpr-validator scan /path/to/repository --articles 17,20 --verbose
-```
-
-### Analyze Fork Impact
-```bash
-gdpr-validator analyze-forks https://github.com/user/repo
-```
-
-## �📊 Sample Output
-
-```
-🔍 GDPR Compliance Scan Results
-Repository: /path/to/your/repo
-Scan Date: 2025-07-13 18:59:00 UTC
-
-⚠️  VIOLATIONS FOUND:
-├── Personal Data Exposure: 47 commits contain email addresses
-├── Right to Erasure (Article 17): IMPOSSIBLE - Data exists in 23 forks
-├── Data Portability (Article 20): PARTIAL - Git format limits portability
-└── Lawful Basis (Article 6): UNCLEAR - No consent mechanism for commit data
-
-📈 Fork Analysis:
-├── Your personal data exists in 23 additional repositories
-├── Geographic distribution: 12 countries identified
-├── Erasure impossibility factor: 100% (distributed across forks)
-
-💡 Recommendations:
-├── Implement commit message sanitization
-├── Consider using .mailmap for email anonymization
-├── Review contributor agreement for data processing consent
-└── Document data retention policies in repository
-```
-
-## 🏗️ Features
-
-### Core Functionality
-- **Git History Analysis**: Deep scan of commit logs, author information, and metadata
-- **Personal Data Detection**: Identifies emails, names, and potentially sensitive information
-- **GDPR Article Compliance**: Checks against Articles 6, 13, 14, 17, and 20
-- **Fork Impact Assessment**: Calculates data multiplication across repository network
-- **Multi-format Reporting**: Generate reports in HTML, PDF, JSON, and markdown
-
-### Advanced Features
-- **Cross-border Transfer Detection**: Identifies international data distribution
-- **Consent Propagation Analysis**: Documents systematic consent failures
-- **Data Minimization Recommendations**: Suggests privacy-preserving alternatives
-- **Compliance Dashboard**: Interactive web interface for ongoing monitoring
-
-## 🎓 Educational Resources
-
-### GDPR Articles Relevant to Git Repositories
-
-**Article 6 - Lawful Basis for Processing**
-- Git commits process personal data (names, emails) - what's your lawful basis?
-
-**Article 13/14 - Information to be Provided**
-- Do contributors know their data will be permanently stored and distributed?
-
-**Article 17 - Right to Erasure**
-- Git's distributed nature makes data erasure technically impossible
-
-**Article 20 - Right to Data Portability**
-- Git format provides some portability, but with significant limitations
+1.  Launch the application by running `python TINS_Edition/main.py`.
+2.  Click the "Select Repository" button to choose the Git repository you want to analyze.
+3.  Configure the scan options as needed.
+4.  Click the "Start Scan" button to begin the analysis.
+5.  Once the scan is complete, the compliance report will be displayed in the report view.
+6.  You can save the report in various formats using the "Save Report" button.
 
 ## 🤝 Contributing
 
 We welcome contributions! This project helps the entire development community understand and address GDPR compliance challenges in version control systems.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+1.  Fork the repository
+2.  Create a feature branch
+3.  Make your changes
+4.  Add tests for new functionality
+5.  Submit a pull request
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
@@ -174,19 +89,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## ⚖️ Legal Notice
 
 This tool is designed for educational and compliance purposes. It identifies potential GDPR compliance issues but does not constitute legal advice. Consult with qualified legal professionals for specific compliance requirements.
-
-## 🔗 Related Resources
-
-- [GDPR Official Text](https://gdpr.eu/tag/gdpr/)
-- [Git Privacy Best Practices](docs/git-privacy-guide.md)
-- [Data Protection Impact Assessment Template](docs/dpia-template.md)
-
-## 📞 Support
-
-- 📧 Email: support@gdpr-git-validator.org
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/EU-GDPR-Git-Validator/discussions)
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/EU-GDPR-Git-Validator/issues)
-
----
-
-*Building privacy-conscious development practices, one repository at a time.*

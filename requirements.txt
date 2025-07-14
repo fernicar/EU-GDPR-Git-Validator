@@ -3,6 +3,7 @@ GitPython>=3.1.40
 jinja2>=3.1.0
 click>=8.1.0
 requests>=2.31.0
+PySide6==6.9.1
 
 # Optional dependencies for enhanced features
 # Install with: pip install gdpr-git-validator[full]

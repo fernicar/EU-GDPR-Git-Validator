@@ -1,45 +1,71 @@
+# GUI Replacement Plan
 
-## Source-Driven GUI Refactor Plan with Commit Checkpoints
+This document outlines the plan for replacing the command-line interface (CLI) with a graphical user interface (GUI) using PySide6.
 
-- [ ] Understand TINS requirements from `TINS_Edition/scuffedepoch-tins.md`.
-  - **Checkpoint:** Commit findings and extracted principles to `new_GUI` branch.
+## I. Foundational Components
 
-- [ ] Analyze all source code in `src/gdpr_validator/` (`cli.py`, `report_generator.py`, `git_scanner.py`, `gdpr_analyser.py`, `compliance_checker.py`) for functionality and UI logic.
-  - **Checkpoint:** Commit analysis notes and identified UI logic to `new_GUI` branch.
+- [x] **Project Initialization**: Set up a new project structure with `main.py` as the entry point and `model.py` for business logic.
+- [x] **Dependency Management**: Create a `requirements.txt` file listing all necessary dependencies, including `PySide6`.
+- [x] **README Update**: Draft a `TINS_Edition/README.md` to explain the project's architecture, TINS motivation, and design choices.
 
-- [ ] Design PySide6 GUI structure based on TINS principles and source code modules:
-    - Map CLI entry points to GUI actions.
-    - Plan widgets for report generation, repository scanning, compliance analysis, and result display.
-  - **Checkpoint:** Commit initial GUI design and widget mapping to `new_GUI` branch.
+## II. Core Application Window
 
-- [ ] Create `TINS_Edition/README.md` summarizing TINS motivation, design decisions, and implementation details.
-  - **Checkpoint:** Commit README draft to `new_GUI` branch.
+- [x] **Main Window**: Create the main application window with a title, menu bar, and status bar.
+- [x] **Menu Bar**:
+    - [x] **File Menu**:
+        - [x] "Select Repository" action to open a file dialog for choosing a Git repository.
+        - [x] "Exit" action to close the application.
+- [x] **Central Widget**:
+    - [x] A tabbed interface to switch between different views (e.g., "Scan", "Report").
 
-- [ ] Integrate PySide6 idioms and layout strategies:
-    - Review `PySide6modern.md` and `best_gui.py` for best practices.
-    - Document signal-slot mappings, widget hierarchies, and GUI design logic.
-  - **Checkpoint:** Commit updated GUI architecture documentation to `new_GUI` branch.
+## III. Scan Configuration View
 
-- [ ] Implement Model component (`model.py`) to encapsulate business logic from all major modules.
-  - **Checkpoint:** Commit initial model implementation to `new_GUI` branch.
+- [x] **Repository Selection**:
+    - [x] A line edit to display the selected repository path.
+    - [x] A "Browse" button to open the file dialog.
+- [x] **Scan Options**:
+    - [x] Checkboxes for scan options (e.g., "Include Forks").
+    - [x] A text input for specifying GDPR articles to check.
+- [x] **Scan Button**:
+    - [x] A "Start Scan" button to trigger the scanning process.
+- [x] **Progress Bar**:
+    - [x] A progress bar to show the progress of the scan.
 
-- [ ] Implement View/Controller component (`main.py`) using PySide6, connecting widgets to model logic.
-  - **Checkpoint:** Commit initial view/controller implementation to `new_GUI` branch.
+## IV. Report View
 
-- [ ] Create root `requirements.txt` with `PySide6==6.9.1` and other dependencies.
-  - **Checkpoint:** Commit requirements file to `new_GUI` branch.
+- [x] **Report Display**:
+    - [x] A web view widget to display the HTML report.
+- [x] **Report Actions**:
+    - [x] "Save Report" button to save the report in different formats (HTML, PDF, JSON, Markdown).
 
-- [ ] Add a `__main__` test block to `model.py` for validating functionality.
-  - **Checkpoint:** Commit test block and results to `new_GUI` branch.
+## V. Business Logic and Data Model
 
-- [ ] Update main `README.md` with installation and usage instructions aligned with TINS principles.
-  - **Checkpoint:** Commit updated README to `new_GUI` branch.
+- [x] **`model.py`**:
+    - [x] Encapsulate the logic from `git_scanner.py`, `gdpr_analyser.py`, and `compliance_checker.py` into a `Model` class.
+    - [x] The `Model` class will handle all the backend operations and data processing.
+    - [x] Implement methods to:
+        - [x] Set the repository path.
+        - [x] Run the scan.
+        - [x] Get the scan results.
+        - [x] Generate the report.
+- [x] **Signals and Slots**:
+    - [x] Use signals and slots to communicate between the GUI and the `Model`.
+    - [x] For example, the `Model` will emit a signal when the scan is complete, and the GUI will have a slot to receive this signal and update the report view.
 
-- [ ] Test `model.py` and fix any bugs.
-  - **Checkpoint:** Commit bug fixes and test results to `new_GUI` branch.
+## VI. Finalization
 
-- [ ] Test `main.py` (GUI interaction) and fix any bugs.
-  - **Checkpoint:** Commit GUI test results and fixes to `new_GUI` branch.
+- [x] **Testing**:
+    - [x] Add a `__main__` block to `model.py` to test its functionality.
+    - [ ] Perform a final integration review of all GUI elements.
+- [x] **README Update**:
+    - [x] Update the root `README.md` with instructions on how to install and run the new GUI application.
 
-- [ ] Final review of GUI layout, event propagation, and modular consistency.
-  - **Checkpoint:** Commit final integration review to `new_GUI` branch.
+## VII. Advanced Features (Full Installation)
+
+- [ ] **PDF Report Generation**:
+    - [ ] Add a "Save as PDF" option to the "Save Report" dialog.
+    - [ ] Implement the logic to generate PDF reports using `weasyprint`.
+- [ ] **Data Analysis Features**:
+    - [ ] Add a new "Analysis" tab to the GUI.
+    - [ ] Implement charts and visualizations using `matplotlib` and `seaborn`.
+    - [ ] Display data analysis results in the "Analysis" tab.
