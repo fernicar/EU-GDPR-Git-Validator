@@ -56,7 +56,7 @@ This document outlines the plan for replacing the command-line interface (CLI) w
 
 - [x] **Testing**:
     - [x] Add a `__main__` block to `model.py` to test its functionality.
-    - [ ] Perform a final integration review of all GUI elements.
+    - [x] Perform a final integration review of all GUI elements.
 - [x] **README Update**:
     - [x] Update the root `README.md` with instructions on how to install and run the new GUI application.
 
@@ -65,7 +65,11 @@ This document outlines the plan for replacing the command-line interface (CLI) w
 - [ ] **PDF Report Generation**:
     - [ ] Add a "Save as PDF" option to the "Save Report" dialog.
     - [ ] Implement the logic to generate PDF reports using `weasyprint`.
-- [ ] **Data Analysis Features**:
-    - [ ] Add a new "Analysis" tab to the GUI.
-    - [ ] Implement charts and visualizations using `matplotlib` and `seaborn`.
-    - [ ] Display data analysis results in the "Analysis" tab.
+- [x] **Data Analysis Features**:
+    - [x] Add a new "Analysis" tab to the GUI.
+    - [x] Implement charts and visualizations using `matplotlib` and `seaborn`.
+    - [x] Display data analysis results in the "Analysis" tab.
+- [x] **Fork Analysis**:
+    - [x] Add a new button to the GUI to trigger the fork analysis.
+    - [x] Add a new method to the `Model` class to handle the fork analysis.
+    - [x] Add a new view to the GUI to display the fork analysis results.
