@@ -4,8 +4,8 @@ from PySide6.QtWidgets import (
     QPushButton, QFileDialog, QLineEdit, QProgressBar, QTabWidget,
     QMessageBox, QLabel
 )
-from PySide6.QtWidgets import QTextBrowser
-from PySide6.QtCore import QUrl, Slot, QThread, Signal
+from PySide6.QtWidgets import QTextBrowser, QStyleFactory
+from PySide6.QtCore import QUrl, Slot, QThread, Signal, Qt
 from pathlib import Path
 import tempfile
 
@@ -39,16 +39,23 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("EU GDPR Git Validator")
         self.model = Model()
 
+        self.app = QApplication.instance()
+        self.app.setStyle(QStyleFactory.create('Fusion'))
+        self.app.styleHints().setColorScheme(Qt.ColorScheme.Dark)
+
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
 
         self.scan_view = QWidget()
         self.report_view = QTextBrowser()
+        self.analysis_view = QWidget()
 
         self.tabs.addTab(self.scan_view, "Scan")
         self.tabs.addTab(self.report_view, "Report")
+        self.tabs.addTab(self.analysis_view, "Analysis")
 
         self.init_scan_view()
+        self.init_analysis_view()
 
     def init_scan_view(self):
         layout = QVBoxLayout()
@@ -78,6 +85,11 @@ class MainWindow(QMainWindow):
         self.progress_bar = QProgressBar()
         layout.addWidget(self.scan_button)
         layout.addWidget(self.progress_bar)
+
+        # Save report button
+        self.save_report_button = QPushButton("Save Report")
+        self.save_report_button.clicked.connect(self.save_report)
+        layout.addWidget(self.save_report_button)
 
         self.scan_view.setLayout(layout)
 
@@ -114,6 +126,7 @@ class MainWindow(QMainWindow):
         with open(report_path, "r") as f:
             self.report_view.setHtml(f.read())
         self.tabs.setCurrentWidget(self.report_view)
+        self.update_analysis_view()
 
     @Slot(str)
     def scan_error(self, error_message):
@@ -121,6 +134,52 @@ class MainWindow(QMainWindow):
         self.progress_bar.setValue(0)
         self.scan_button.setEnabled(True)
         QMessageBox.critical(self, "Error", f"An error occurred during the scan:\n{error_message}")
+
+    @Slot()
+    def save_report(self):
+        if not self.model.get_scan_results():
+            QMessageBox.warning(self, "Warning", "Please run a scan first.")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Report",
+            "",
+            "PDF Files (*.pdf);;HTML Files (*.html);;JSON Files (*.json);;Markdown Files (*.md)",
+        )
+
+        if file_path:
+            file_path = Path(file_path)
+            format = file_path.suffix[1:]
+            self.model.generate_report(file_path, format)
+            QMessageBox.information(self, "Success", f"Report saved to {file_path}")
+
+    def init_analysis_view(self):
+        layout = QVBoxLayout()
+        self.analysis_view.setLayout(layout)
+
+    def update_analysis_view(self):
+        layout = self.analysis_view.layout()
+        # Clear previous widgets
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        if not self.model.get_scan_results():
+            return
+
+        # Example analysis: personal data distribution
+        personal_data = self.model.get_scan_results().get("personal_data", {})
+        emails = len(personal_data.get("emails", []))
+        authors = len(personal_data.get("authors", []))
+        committers = len(personal_data.get("committers", []))
+
+        # This is a placeholder for where you would use matplotlib/seaborn
+        # to generate and display charts. For now, we'll just show a summary.
+        summary = f"Emails: {emails}\nAuthors: {authors}\nCommitters: {committers}"
+        label = QLabel(summary)
+        layout.addWidget(label)
 
 
 if __name__ == "__main__":
