@@ -78,6 +78,7 @@ class GitScanner:
             'scan_timestamp': datetime.now().isoformat(),
             'total_commits': 0,
             'total_branches': 0,
+            'repository_status': {},
             'personal_data': {
                 'emails': set(),
                 'authors': set(),
@@ -99,6 +100,9 @@ class GitScanner:
         commit_data = self._scan_commit_history()
         results['commit_analysis'] = commit_data['commits']
         results['total_commits'] = commit_data['total_count']
+        
+        # Analyze repository status
+        results['repository_status'] = self._analyze_repository_status(commit_data['total_count'])
         
         # Extract personal data
         results['personal_data'] = self._extract_personal_data(commit_data['commits'])
@@ -395,6 +399,60 @@ class GitScanner:
         })
         
         return indicators
+    
+    def _analyze_repository_status(self, commit_count: int) -> Dict[str, Any]:
+        """Analyze repository status and content level for better UX."""
+        try:
+            if commit_count == 0:
+                return {
+                    'status': 'EMPTY',
+                    'status_code': 'empty',
+                    'message': 'Repository contains no commits but Git architecture violations still apply',
+                    'description': 'Empty repository - GDPR violations exist due to Git\'s fundamental design',
+                    'show_architectural_only': True,
+                    'commit_count': 0,
+                    'severity_note': 'Even empty repositories violate GDPR due to Git\'s distributed architecture'
+                }
+            elif commit_count < 10:
+                return {
+                    'status': 'MINIMAL',
+                    'status_code': 'minimal',
+                    'message': f'Small repository with {commit_count} commits',
+                    'description': f'Minimal activity repository with limited personal data exposure',
+                    'show_architectural_only': False,
+                    'commit_count': commit_count,
+                    'severity_note': 'Low data volume but architectural violations remain'
+                }
+            elif commit_count < 100:
+                return {
+                    'status': 'MODERATE',
+                    'status_code': 'moderate',
+                    'message': f'Moderate repository with {commit_count} commits',
+                    'description': f'Active repository with moderate personal data exposure',
+                    'show_architectural_only': False,
+                    'commit_count': commit_count,
+                    'severity_note': 'Moderate data volume with full GDPR implications'
+                }
+            else:
+                return {
+                    'status': 'POPULATED',
+                    'status_code': 'populated',
+                    'message': f'Active repository with {commit_count} commits',
+                    'description': f'High-activity repository with significant personal data exposure',
+                    'show_architectural_only': False,
+                    'commit_count': commit_count,
+                    'severity_note': 'High data volume with maximum GDPR compliance risk'
+                }
+        except Exception as e:
+            return {
+                'status': 'ERROR',
+                'status_code': 'error',
+                'message': 'Cannot analyze repository status',
+                'description': f'Error during repository analysis: {str(e)}',
+                'show_architectural_only': True,
+                'commit_count': commit_count,
+                'severity_note': 'Analysis error - assume worst-case GDPR implications'
+            }
     
     def _serialize_results(self, results: Dict[str, Any]) -> None:
         """Convert sets to lists for JSON serialization."""

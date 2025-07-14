@@ -33,6 +33,59 @@ class ReportGenerator:
         """
         self.verbose = verbose
         
+        # User-friendly explanations for violations
+        self.violation_explanations = {
+            'missing_lawful_basis': {
+                'simple': "No legal permission to process contributor personal data",
+                'technical': "Every Git commit contains personal information (names, emails, timestamps) but there's no legal basis for processing this data under GDPR Article 6",
+                'fixable': True,
+                'fix': "Add privacy notice explaining why you need contributor data",
+                'priority': 'high'
+            },
+            'erasure_impossible': {
+                'simple': "Cannot delete personal data due to Git's design",
+                'technical': "Git's distributed architecture and immutable history make it technically impossible to completely erase personal data, violating GDPR Article 17",
+                'fixable': False,
+                'fix': "Impossible - this is a fundamental Git architecture problem",
+                'priority': 'critical'
+            },
+            'fork_propagation': {
+                'simple': "Personal data automatically copies to other repositories",
+                'technical': "When repositories are forked, all personal data (commit history, contributor information) is automatically duplicated without consent",
+                'fixable': False,
+                'fix': "Impossible - Git's fork mechanism cannot be disabled",
+                'priority': 'critical'
+            },
+            'cross_border_transfer': {
+                'simple': "Personal data transferred internationally without consent",
+                'technical': "Git repositories hosted on platforms like GitHub automatically transfer EU personal data to US servers without adequate safeguards",
+                'fixable': True,
+                'fix': "Document international transfers and implement adequate safeguards",
+                'priority': 'high'
+            },
+            'no_privacy_notice': {
+                'simple': "Contributors not informed about data processing",
+                'technical': "GDPR Articles 13/14 require informing data subjects about processing, but Git repositories typically lack privacy notices",
+                'fixable': True,
+                'fix': "Add CONTRIBUTING.md with privacy notice and data processing information",
+                'priority': 'medium'
+            },
+            'permanent_retention': {
+                'simple': "Personal data stored permanently without justification",
+                'technical': "Git's immutable history creates permanent retention of personal data without documented retention periods or justification",
+                'fixable': True,
+                'fix': "Document data retention policy and justification for permanent storage",
+                'priority': 'medium'
+            },
+            'distributed_processing': {
+                'simple': "Personal data processed by unlimited third parties",
+                'technical': "Git's distributed nature means personal data is automatically processed by anyone who clones or forks the repository",
+                'fixable': False,
+                'fix': "Impossible - Git's distributed architecture cannot be changed",
+                'priority': 'critical'
+            }
+        }
+        
         # HTML template for reports
         self.html_template = """
 <!DOCTYPE html>
@@ -184,6 +237,49 @@ class ReportGenerator:
         .severity-low { color: #20c997; }
         .status-compliant { color: #28a745; font-weight: bold; }
         .status-non-compliant { color: #dc3545; font-weight: bold; }
+        .criteria-section {
+            margin: 20px 0;
+        }
+        .impossible-criteria {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .fixable-criteria {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .repo-status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .repo-status.empty {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .repo-status.minimal {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .repo-status.moderate {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .repo-status.populated {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
         .footer {
             text-align: center;
             padding: 20px;
@@ -219,6 +315,44 @@ class ReportGenerator:
         <div class="card">
             <h3>Severity Level</h3>
             <div class="value severity-{{ severity_level }}">{{ severity_level|upper }}</div>
+        </div>
+    </div>
+
+    {% if repository_status %}
+    <div class="repo-status {{ repository_status.status_code }}">
+        <h3>📁 Repository Status: {{ repository_status.status }}</h3>
+        <p>{{ repository_status.message }}</p>
+        <p><em>{{ repository_status.severity_note }}</em></p>
+    </div>
+    {% endif %}
+
+    <div class="criteria-section">
+        <h2>📋 GDPR Compliance Criteria</h2>
+        
+        <div class="impossible-criteria">
+            <h3>❌ ARCHITECTURAL IMPOSSIBILITIES</h3>
+            <p class="critical">These violations CANNOT be fixed due to Git's fundamental design:</p>
+            <ul>
+                <li><strong>Article 17 - Right to Erasure:</strong> Git's distributed nature makes data deletion impossible</li>
+                <li><strong>Fork Propagation:</strong> Data automatically copies to unlimited repositories globally</li>
+                <li><strong>Permanent Hash References:</strong> Git creates immutable links to personal data</li>
+                <li><strong>International Transfers:</strong> Forks automatically transfer data across borders</li>
+                <li><strong>Distributed Processing:</strong> Personal data processed by unlimited third parties</li>
+            </ul>
+            <p class="critical">⚖️ These prove that Git architecture fundamentally violates GDPR</p>
+        </div>
+        
+        <div class="fixable-criteria">
+            <h3>✅ POTENTIALLY FIXABLE</h3>
+            <p class="info">These violations can be addressed with documentation and agreements:</p>
+            <ul>
+                <li><strong>Privacy Notices:</strong> Add CONTRIBUTING.md with data processing information</li>
+                <li><strong>Lawful Basis:</strong> Document legitimate interests for processing contributor data</li>
+                <li><strong>Consent Mechanisms:</strong> Implement contributor agreements</li>
+                <li><strong>Rights Information:</strong> Inform contributors about data protection rights</li>
+                <li><strong>Retention Policies:</strong> Document data retention justification</li>
+            </ul>
+            <p class="warning">⚠️ Even with these fixes, fundamental architectural violations remain</p>
         </div>
     </div>
 
@@ -375,6 +509,50 @@ class ReportGenerator:
         if self.verbose:
             print(f"✅ Report generated successfully: {output_path}")
     
+    def get_user_friendly_explanation(self, violation_type: str) -> Dict[str, Any]:
+        """Convert legal violations to plain English explanations."""
+        return self.violation_explanations.get(violation_type, {
+            'simple': 'Unknown violation type',
+            'technical': 'No explanation available',
+            'fixable': False,
+            'fix': 'Contact support',
+            'priority': 'unknown'
+        })
+    
+    def generate_criteria_section(self) -> str:
+        """Generate clear pass/fail criteria for HTML report."""
+        return """
+        <div class="criteria-section">
+            <h2>📋 GDPR Compliance Criteria</h2>
+            
+            <div class="impossible-criteria">
+                <h3>❌ ARCHITECTURAL IMPOSSIBILITIES</h3>
+                <p class="critical">These violations CANNOT be fixed due to Git's fundamental design:</p>
+                <ul>
+                    <li><strong>Article 17 - Right to Erasure:</strong> Git's distributed nature makes data deletion impossible</li>
+                    <li><strong>Fork Propagation:</strong> Data automatically copies to unlimited repositories globally</li>
+                    <li><strong>Permanent Hash References:</strong> Git creates immutable links to personal data</li>
+                    <li><strong>International Transfers:</strong> Forks automatically transfer data across borders</li>
+                    <li><strong>Distributed Processing:</strong> Personal data processed by unlimited third parties</li>
+                </ul>
+                <p class="critical">⚖️ These prove that Git architecture fundamentally violates GDPR</p>
+            </div>
+            
+            <div class="fixable-criteria">
+                <h3>✅ POTENTIALLY FIXABLE</h3>
+                <p class="info">These violations can be addressed with documentation and agreements:</p>
+                <ul>
+                    <li><strong>Privacy Notices:</strong> Add CONTRIBUTING.md with data processing information</li>
+                    <li><strong>Lawful Basis:</strong> Document legitimate interests for processing contributor data</li>
+                    <li><strong>Consent Mechanisms:</strong> Implement contributor agreements</li>
+                    <li><strong>Rights Information:</strong> Inform contributors about data protection rights</li>
+                    <li><strong>Retention Policies:</strong> Document data retention justification</li>
+                </ul>
+                <p class="warning">⚠️ Even with these fixes, fundamental architectural violations remain</p>
+            </div>
+        </div>
+        """
+    
     def _prepare_report_data(
         self,
         scan_results: Dict[str, Any],
@@ -407,6 +585,7 @@ class ReportGenerator:
             'severity_level': compliance_results.get('severity_level', 'unknown'),
             'total_commits': scan_results.get('total_commits', 0),
             'total_branches': scan_results.get('total_branches', 0),
+            'repository_status': scan_results.get('repository_status', {}),
             'personal_data': scan_results.get('personal_data', {}),
             'violations': violations,
             'article_results': compliance_results.get('article_results', {}),
