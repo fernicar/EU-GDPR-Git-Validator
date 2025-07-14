@@ -11,7 +11,7 @@ This tool analyses your Git history for potential European data protection viola
 ## 🚀 Quick Start
 
 ```bash
-pip install gdpr-git-validator
+ pip install -e .
 gdpr-validator scan /path/to/your/repo
 ```
 
@@ -43,7 +43,9 @@ Every Git repository potentially contains:
 
 ### Basic Installation (Core Features)
 ```bash
-pip install gdpr-git-validator
+git clone https://github.com/DragonDiffusionbyBoyo/EU-GDPR-Git-Validator.git
+cd EU-GDPR-Git-Validator
+pip install -e .
 ```
 
 ### Full Installation (All Features)
