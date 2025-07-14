@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
         self.progress_bar.setRange(0, 1)
         self.progress_bar.setValue(1)
         self.scan_button.setEnabled(True)
-        with open(report_path, "r") as f:
+        with open(report_path, "r", encoding="utf-8") as f:
             self.report_view.setHtml(f.read())
         self.tabs.setCurrentWidget(self.report_view)
         self.update_analysis_view()
