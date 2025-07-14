@@ -150,7 +150,17 @@ class MainWindow(QMainWindow):
 
         if file_path:
             file_path = Path(file_path)
-            format = file_path.suffix[1:]
+            selected_filter = _
+            if "PDF" in selected_filter:
+                format = "pdf"
+            elif "HTML" in selected_filter:
+                format = "html"
+            elif "JSON" in selected_filter:
+                format = "json"
+            elif "Markdown" in selected_filter:
+                format = "markdown"
+            else:
+                format = "html"  # Default to HTML
             self.model.generate_report(file_path, format)
             QMessageBox.information(self, "Success", f"Report saved to {file_path}")
 
