@@ -52,6 +52,9 @@ class Model:
                 format
             )
 
+    def analyze_forks(self, repo_url):
+        self._fork_results = self._analyser.analyze_fork_impact(repo_url)
+
 if __name__ == '__main__':
     # Create a dummy repository for testing
     import subprocess

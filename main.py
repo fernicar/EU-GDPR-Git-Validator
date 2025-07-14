@@ -91,6 +91,11 @@ class MainWindow(QMainWindow):
         self.save_report_button.clicked.connect(self.save_report)
         layout.addWidget(self.save_report_button)
 
+        # Analyze forks button
+        self.analyze_forks_button = QPushButton("Analyze Forks")
+        self.analyze_forks_button.clicked.connect(self.analyze_forks)
+        layout.addWidget(self.analyze_forks_button)
+
         self.scan_view.setLayout(layout)
 
     @Slot()
@@ -163,6 +168,29 @@ class MainWindow(QMainWindow):
                 format = "html"  # Default to HTML
             self.model.generate_report(file_path, format)
             QMessageBox.information(self, "Success", f"Report saved to {file_path}")
+
+    @Slot()
+    def analyze_forks(self):
+        if not self.repo_path_edit.text():
+            QMessageBox.warning(self, "Warning", "Please select a repository first.")
+            return
+
+        # For now, we'll use a placeholder for the repository URL
+        repo_url = "https://github.com/example/repo"
+        self.model.analyze_forks(repo_url)
+        fork_results = self.model.get_fork_results()
+
+        # Display the results in a new tab or a dialog
+        fork_report = ""
+        if fork_results:
+            fork_report = "<h1>Fork Analysis Results</h1>"
+            fork_report += f"<p>Total Forks: {fork_results.get('total_forks', 0)}</p>"
+            fork_report += f"<p>Countries: {fork_results.get('countries', [])}</p>"
+            fork_report += f"<p>Multiplication Factor: {fork_results.get('multiplication_factor', 1)}</p>"
+            fork_report += f"<p>Erasure Impossible: {fork_results.get('erasure_impossible', True)}</p>"
+
+        self.report_view.setHtml(fork_report)
+        self.tabs.setCurrentWidget(self.report_view)
 
     def init_analysis_view(self):
         layout = QVBoxLayout()
