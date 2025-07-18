@@ -67,6 +67,7 @@ The data model is encapsulated in the `Model` class in `model.py`. This class is
 *   **PySide6**: The GUI is built using PySide6, the official Python bindings for the Qt framework.
 *   **GitPython**: The tool uses the GitPython library to interact with Git repositories.
 *   **Jinja2**: The HTML reports are generated using the Jinja2 template engine.
+*   **WeasyPrint**: The PDF reports are generated using the WeasyPrint library.
 
 ## Style Guide
 
